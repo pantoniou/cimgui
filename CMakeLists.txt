@@ -77,7 +77,7 @@ install(TARGETS cimgui
 	ARCHIVE DESTINATION lib)
 install(FILES
 	cimgui.h
-	DESTINATION include/ncnn)
+	DESTINATION include/cimgui)
 
 #test
 set(CIMGUI_TEST "no" CACHE STRING "Enable compilation of a test unit based on imgui null")

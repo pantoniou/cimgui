@@ -15,13 +15,6 @@ set(IMGUI_STATIC "no" CACHE STRING "Build as a static library")
 set(IMGUI_FREETYPE "no" CACHE STRING "Build with freetype library")
 set(IMGUI_LIBRARIES )
 
-if(IMGUI_FREETYPE)
-	FIND_PACKAGE(freetype REQUIRED PATHS ${FREETYPE_PATH})
-	list(APPEND IMGUI_LIBRARIES freetype)
-	list(APPEND IMGUI_SOURCES imgui/misc/freetype/imgui_freetype.cpp)
-	add_definitions("-DCIMGUI_FREETYPE=1")
-endif(IMGUI_FREETYPE)
-
 #add library and link
 if (IMGUI_STATIC)
     add_library(cimgui STATIC ${IMGUI_SOURCES})
@@ -36,17 +29,37 @@ else (WIN32)
     target_compile_definitions(cimgui PUBLIC IMGUI_IMPL_API=extern\t\"C\"\t)
 endif (WIN32)
 
+if(IMGUI_FREETYPE)
+	find_package(PkgConfig REQUIRED)
+	pkg_check_modules(FREETYPE REQUIRED freetype2)
+	add_definitions("-DCIMGUI_FREETYPE=1")
+else(IMGUI_FREETYPE)
+	set(FREETYPE_LIBRARIES)
+	set(FREETYPE_INCLUDE_DIRS)
+	set(FREETYPE_CFLAGS_OTHER)
+endif(IMGUI_FREETYPE)
+
 target_include_directories(cimgui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(cimgui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/imgui)
-set_target_properties(cimgui PROPERTIES PREFIX "")
+target_link_libraries(cimgui ${FREETYPE_LIBRARIES})
+target_include_directories(cimgui PUBLIC ${FREETYPE_INCLUDE_DIRS})
+target_compile_options(cimgui PUBLIC ${FREETYPE_CFLAGS_OTHER})
+# set_target_properties(cimgui PROPERTIES PREFIX "")
 target_link_libraries(cimgui ${IMGUI_LIBRARIES})
 
 #install
+#install(TARGETS cimgui
+#    RUNTIME DESTINATION  .
+#    LIBRARY DESTINATION  .
+#    ARCHIVE DESTINATION  .
+#)
+
 install(TARGETS cimgui
-    RUNTIME DESTINATION  .
-    LIBRARY DESTINATION  .
-    ARCHIVE DESTINATION  .
-)
+	EXPORT cimgui
+	ARCHIVE DESTINATION lib)
+install(FILES
+	cimgui.h
+	DESTINATION include/ncnn)
 
 #test
 set(CIMGUI_TEST "no" CACHE STRING "Enable compilation of a test unit based on imgui null")

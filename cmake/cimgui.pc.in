@@ -1,0 +1,9 @@
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+prefix=@CMAKE_INSTALL_PREFIX@
+
+Name: cimgui
+Description: cimgui is C binding for ImgUI
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -lcimgui @CIMGUI_DEP_LIBS@
+Cflags: -I${includedir} @CIMGUI_DEP_CFLAGS@

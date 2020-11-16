@@ -65,13 +65,6 @@ target_compile_options(cimgui PUBLIC ${FREETYPE_CFLAGS_OTHER})
 # set_target_properties(cimgui PROPERTIES PREFIX "")
 target_link_libraries(cimgui ${IMGUI_LIBRARIES})
 
-#install
-#install(TARGETS cimgui
-#    RUNTIME DESTINATION  .
-#    LIBRARY DESTINATION  .
-#    ARCHIVE DESTINATION  .
-#)
-
 install(TARGETS cimgui
 	EXPORT cimgui
 	ARCHIVE DESTINATION lib)
@@ -122,6 +115,17 @@ if(CIMGUI_PKGCONFIG)
     if(IMGUI_FREETYPE)
         set(CIMGUI_DEP_LIBS "${CIMGUI_DEP_LIBS} -lfreetype")
     endif()
+
+    set(CIMGUI_DEP_CFLAGS "-DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1")
+    if (WIN32)
+        set(CIMGUI_DEP_CFLAGS "${CIMGUI_DEP_CFLAGS} -DIMGUI_IMPL_API='extern\t\"C\"\t__declspec\(dllexport\)'")
+    else (WIN32)
+        set(CIMGUI_DEP_CFLAGS "${CIMGUI_DEP_CFLAGS} -DIMGUI_IMPL_API='extern\t\"C\"\t'")
+    endif (WIN32)
+
+    if(IMGUI_FREETYPE)
+        set(CIMGUI_DEP_CFLAGS "${CIMGUI_DEP_CFLAGS} -DCIMGUI_FREETYPE=1")
+    endif(IMGUI_FREETYPE)
 
     configure_file(
         cmake/cimgui.pc.in

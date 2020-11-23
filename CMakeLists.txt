@@ -67,7 +67,8 @@ target_link_libraries(cimgui ${IMGUI_LIBRARIES})
 
 install(TARGETS cimgui
 	EXPORT cimgui
-	ARCHIVE DESTINATION lib)
+	ARCHIVE DESTINATION lib
+	LIBRARY DESTINATION lib)
 install(FILES
 	cimgui.h
 	DESTINATION include/cimgui)
